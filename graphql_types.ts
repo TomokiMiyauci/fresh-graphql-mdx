@@ -13,6 +13,15 @@ export type Scalars = {
   Float: number;
 };
 
+export type CompileOptionsInput = {
+  /** Whether to keep JSX. */
+  jsx?: InputMaybe<Scalars['Boolean']>;
+  /** sss */
+  jsxImportSource?: InputMaybe<Scalars['String']>;
+  /** Whether to compile to a whole program or a function body. */
+  outputFormat?: InputMaybe<OutputFormat>;
+};
+
 export type File = {
   __typename?: 'File';
   absolutePath: Scalars['String'];
@@ -34,6 +43,10 @@ export type Meta = {
   baseUrl: Scalars['String'];
 };
 
+export type OutputFormat =
+  | 'FUNCTION_BODY'
+  | 'PROGRAM';
+
 export type Query = {
   __typename?: 'Query';
   allMdx: Array<Mdx>;
@@ -44,6 +57,7 @@ export type Query = {
 
 
 export type QueryMdxArgs = {
+  compilerOptions?: InputMaybe<CompileOptionsInput>;
   slug?: InputMaybe<Scalars['String']>;
 };
 
@@ -127,9 +141,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CompileOptionsInput: CompileOptionsInput;
   File: ResolverTypeWrapper<File>;
   Mdx: ResolverTypeWrapper<Mdx>;
   Meta: ResolverTypeWrapper<Meta>;
+  OutputFormat: OutputFormat;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Text: ResolverTypeWrapper<Text>;
@@ -139,6 +155,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  CompileOptionsInput: CompileOptionsInput;
   File: File;
   Mdx: Mdx;
   Meta: Meta;

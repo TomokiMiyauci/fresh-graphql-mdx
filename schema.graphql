@@ -1,6 +1,6 @@
 type Query {
   allMdx: [Mdx!]!
-  mdx(slug: String): Mdx
+  mdx(slug: String, compilerOptions: CompileOptionsInput): Mdx
   mdxInputs: [File]!
   meta: Meta
 }
@@ -31,4 +31,26 @@ type File {
   node: Text!
   value: String!
   type: Type!
+}
+
+input CompileOptionsInput {
+  """
+  Whether to keep JSX.
+  """
+  jsx: Boolean
+
+  """
+  Whether to compile to a whole program or a function body.
+  """
+  outputFormat: OutputFormat
+
+  """
+  Place to import automatic JSX runtimes from (used in automatic runtime).
+  """
+  jsxImportSource: String
+}
+
+enum OutputFormat {
+  PROGRAM
+  FUNCTION_BODY
 }

@@ -2,16 +2,21 @@ import { QueryResolvers } from "~/graphql_types.ts";
 import { ContextValue } from "~/types.ts";
 import { join, parse, relative } from "std/path/mod.ts";
 import Mdx from "~/schema/mdx/model.ts";
-import { File } from "~/graphql_types.ts";
+import { CompileOptionsInput, File } from "~/graphql_types.ts";
+import { CompileOptions } from "@mdx-js/mdx";
 
 export const Query: QueryResolvers<ContextValue> = {
   mdxInputs: (_, __, { mdxInputs }) => {
     return mdxInputs;
   },
-  mdx: (_, { slug }, { mdxInputs, meta: { rootDir } }) => {
+  mdx: (_, { slug, compilerOptions }, { mdxInputs, meta: { rootDir } }) => {
     if (!slug) return null;
 
-    const mdxs = mdxInputs.map((file) => fromFileToMdx(file, rootDir));
+    const mdxs = mdxInputs.map((file) =>
+      fromFileToMdx(file, rootDir, {
+        compilerOptions: normalizeCompilerOptions(compilerOptions ?? {}),
+      })
+    );
     const maybeMdx = mdxs.find((mdx) => mdx.slug === slug);
 
     if (!maybeMdx) return null;
@@ -33,8 +38,24 @@ function resolveSlug(rootDir: string, filePath: string): string {
   return pathBasedSlug;
 }
 
-function fromFileToMdx(file: File, rootDir: string): Mdx {
+function fromFileToMdx(
+  file: File,
+  rootDir: string,
+  { compilerOptions }: Partial<{ compilerOptions: CompileOptions }> = {},
+): Mdx {
+  compilerOptions?.outputFormat === "function-body";
   const pathBasedSlug = resolveSlug(rootDir, file.absolutePath);
 
-  return new Mdx({ file }, { slug: pathBasedSlug });
+  return new Mdx({ file }, { slug: pathBasedSlug, compilerOptions });
+}
+
+function normalizeCompilerOptions(
+  { outputFormat, jsx, ...rest }: CompileOptionsInput,
+): CompileOptions {
+  return {
+    outputFormat: outputFormat === "FUNCTION_BODY"
+      ? "function-body"
+      : "program",
+    ...rest,
+  };
 }

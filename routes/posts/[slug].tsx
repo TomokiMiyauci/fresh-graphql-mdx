@@ -6,10 +6,11 @@ import GraphQLHTTP from "~/gql_http.ts";
 import { gqlRequest, resolveResponse } from "~/utils/gql_fetches.ts";
 import { MdxQuery, QueryMdxArgs } from "~/graphql_types.ts";
 import type { MDXContent as MDXContentType } from "types/mdx";
-import { text2Js } from "~/utils/mdx.ts";
+import { run } from "@mdx-js/mdx";
+import * as runtime from "preact/jsx-runtime";
 
 const query = /* GraphQL */ `query Mdx($slug: String) {
-  mdx(slug: $slug) {
+  mdx(slug: $slug, compilerOptions:{ outputFormat: FUNCTION_BODY, jsxImportSource: "preact"}) {
     jsx
   }
 }
@@ -36,9 +37,9 @@ export const handler: Handler<MdxQuery & { MDXContent: MDXContentType }> =
       });
     }
 
-    const { default: MDXContent } = await text2Js<{ default: MDXContentType }>(
-      mdx.jsx,
-    );
+    const { default: MDXContent } = await run(mdx.jsx, runtime) as {
+      default: MDXContentType;
+    };
 
     return ctx.render({ mdx, MDXContent });
   };
