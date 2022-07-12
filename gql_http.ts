@@ -3,7 +3,7 @@ import { dirname, fromFileUrl, join, toFileUrl } from "std/path/mod.ts";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { resolvers } from "~/schema/resolvers.ts";
 import { ContextValue } from "~/types.ts";
-import { expandGlobSync } from "std/fs/mod.ts";
+import { expandGlob } from "std/fs/mod.ts";
 import { Fetch, Input } from "~/models/fetcher.ts";
 import { FileNode, TextNode } from "~/models/data.ts";
 import { File } from "~/graphql_types.ts";
@@ -12,15 +12,18 @@ const baseDir = dirname(fromFileUrl(import.meta.url));
 const filePath = join(baseDir, "schema.graphql");
 const schemaStr = await Deno.readTextFile(filePath);
 
-const entry = expandGlobSync(join(baseDir, "posts", "**", "*.mdx"));
+const asyncEntry = expandGlob(join(baseDir, "posts", "**", "*.mdx"));
 
-const sources = [...entry].filter((file) => file.isFile).map((file) => {
-  const input: Input = {
-    resource: toFileUrl(file.path).href,
-    type: "text",
-  };
-  return input;
-});
+const sources: Input[] = [];
+for await (const entry of asyncEntry) {
+  if (entry.isFile) {
+    const input: Input = {
+      resource: toFileUrl(entry.path).href,
+      type: "text",
+    };
+    sources.push(input);
+  }
+}
 
 const mdxInputs: File[] = await Promise.all(
   sources.map(
