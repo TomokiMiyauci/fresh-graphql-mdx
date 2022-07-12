@@ -1,0 +1,34 @@
+type Query {
+  allMdx: [Mdx!]!
+  mdx(slug: String): Mdx
+  mdxInputs: [File]!
+  meta: Meta
+}
+
+type Mdx {
+  jsx: String!
+  raw: String!
+  slug: String
+}
+
+type Meta {
+  baseUrl: String!
+}
+
+type Text {
+  value: String!
+  type: Type!
+}
+
+enum Type {
+  TEXT
+  FILE
+}
+
+type File {
+  resource: String!
+  absolutePath: String!
+  node: Text!
+  value: String!
+  type: Type!
+}
