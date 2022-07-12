@@ -1,0 +1,19 @@
+{
+  "imports": {
+    "fresh/": "https://deno.land/x/fresh@1.0.1/",
+    "preact": "https://esm.sh/preact@10.8.2",
+    "preact/": "https://esm.sh/preact@10.8.2/",
+    "preact-render-to-string": "https://esm.sh/preact-render-to-string@5.2.0?deps=preact@10.8.2",
+    "@twind": "./utils/twind.ts",
+    "twind": "https://esm.sh/twind@0.16.17",
+    "twind/": "https://esm.sh/twind@0.16.17/",
+    "@mdx-js/mdx": "https://esm.sh/@mdx-js/mdx@2.1.2",
+    "graphql_http/": "https://deno.land/x/graphql_http@1.0.0-beta.1/",
+    "graphql": "https:/esm.sh/graphql@latest",
+    "std/": "https://deno.land/std@0.147.0/",
+    "@graphql-tools/schema": "https://esm.sh/@graphql-tools/schema@8.5.0",
+    "pure_json/": "https://deno.land/x/pure_json@1.0.0-beta.1/",
+    "types/mdx": "https://esm.sh/@types/mdx/types.d.ts",
+    "~/": "./"
+  }
+}

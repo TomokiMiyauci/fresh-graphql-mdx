@@ -1,0 +1,12 @@
+overwrite: true
+schema: ./schema.graphql
+documents:
+  - ./routes/**/*.tsx
+generates:
+  graphql_types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+      - typescript-operations
+    config:
+      enumsAsTypes: true
