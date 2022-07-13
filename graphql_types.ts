@@ -51,6 +51,7 @@ export type Mdx = {
   __typename?: 'Mdx';
   compilerOptions?: Maybe<CompileOptions>;
   fileNode: FileNode;
+  html: Scalars['String'];
   jsx: Scalars['String'];
   raw: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
@@ -253,6 +254,7 @@ export type FileNodeResolvers<ContextType = any, ParentType extends ResolversPar
 export type MdxResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mdx'] = ResolversParentTypes['Mdx']> = {
   compilerOptions?: Resolver<Maybe<ResolversTypes['CompileOptions']>, ParentType, ContextType>;
   fileNode?: Resolver<ResolversTypes['FileNode'], ParentType, ContextType>;
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   jsx?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -318,7 +320,7 @@ export type MdxQueryVariables = Exact<{
 }>;
 
 
-export type MdxQuery = { __typename?: 'Query', mdx?: { __typename?: 'Mdx', jsx: string } | null };
+export type MdxQuery = { __typename?: 'Query', mdx?: { __typename?: 'Mdx', jsx: string, html: string } | null };
 
 export type AllMdxQueryVariables = Exact<{ [key: string]: never; }>;
 

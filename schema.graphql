@@ -9,6 +9,7 @@ type Query {
 type Mdx {
   jsx: String!
   raw: String!
+  html: String!
   slug: String
 
   compilerOptions: CompileOptions

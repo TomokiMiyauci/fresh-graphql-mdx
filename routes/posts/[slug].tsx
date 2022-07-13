@@ -5,54 +5,55 @@ import { tw } from "@twind";
 import GraphQLHTTP from "~/gql_http.ts";
 import { gqlRequest, resolveResponse } from "~/utils/gql_fetches.ts";
 import { MdxQuery, QueryMdxArgs } from "~/graphql_types.ts";
-import type { MDXContent as MDXContentType } from "types/mdx";
-import { run } from "@mdx-js/mdx";
-import * as runtime from "preact/jsx-runtime";
+import { Status, STATUS_TEXT } from "std/http/mod.ts";
 
 const query = /* GraphQL */ `query Mdx($slug: String) {
   mdx(slug: $slug, compilerOptions:{ outputFormat: FUNCTION_BODY, jsxImportSource: "preact"}) {
     jsx
+    html
   }
 }
 `;
 
-export const handler: Handler<MdxQuery & { MDXContent: MDXContentType }> =
-  async (
-    req,
-    ctx,
-  ) => {
-    const url = new URL(req.url);
-    const variables: QueryMdxArgs = {
-      slug: url.pathname,
-    };
-    const endpoint = new URL("/graphql", req.url);
-    const request = gqlRequest({ endpoint, query }, {
-      variables,
-    });
-    const res = await GraphQLHTTP(request);
-    const { mdx } = await resolveResponse<MdxQuery>(res);
-    if (!mdx) {
-      return new Response("404 Not Found", {
-        status: 404,
-      });
-    }
-
-    const { default: MDXContent } = await run(mdx.jsx, runtime) as {
-      default: MDXContentType;
-    };
-
-    return ctx.render({ mdx, MDXContent });
+export const handler: Handler<{ content: string }> = async (
+  req,
+  ctx,
+) => {
+  const url = new URL(req.url);
+  const variables: QueryMdxArgs = {
+    slug: url.pathname,
   };
+  const endpoint = new URL("/graphql", req.url);
+  const request = gqlRequest({ endpoint, query }, {
+    variables,
+  });
+  const res = await GraphQLHTTP(request);
+  const { mdx } = await resolveResponse<MdxQuery>(res);
+  if (!mdx) {
+    return new Response(STATUS_TEXT[Status.NotFound], {
+      status: Status.NotFound,
+    });
+  }
+
+  // Deno Deploy is not available new Function or dynamic import
+  // const { default: MDXContent } = await run(mdx.jsx, runtime) as {
+  //   default: MDXContentType;
+  // };
+
+  return ctx.render({ content: mdx.html });
+};
 
 export default function Home(
-  { data: { MDXContent } }: PageProps<
-    MdxQuery & { MDXContent: MDXContentType }
-  >,
+  { data: { content } }: PageProps<{ content: string }>,
 ) {
   return (
     <main>
-      <article class={tw`prose`}>
-        <MDXContent />
+      <article
+        dangerouslySetInnerHTML={{
+          "__html": content,
+        }}
+        class={tw`prose`}
+      >
       </article>
     </main>
   );
