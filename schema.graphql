@@ -9,7 +9,6 @@ type Query {
 type Mdx {
   jsx: String!
   raw: String!
-  html: String!
   slug: String
 
   compilerOptions: CompileOptions
@@ -42,13 +41,70 @@ type FileNode implements Node {
 }
 
 type ResourceNode {
-  uri: String!
+  url: Url!
+
+  request: Request!
 
   type: String!
 
   value: String!
 
   resourceType: ResourceType!
+
+  response: Response!
+}
+
+type Request {
+  integrity: String
+  isHistoryNavigation: Boolean
+  isReloadNavigation: Boolean
+  keepalive: Boolean
+  method: String!
+  mode: RequestMode
+  redirect: RequestRedirect!
+  referrer: String
+  referrerPolicy: String
+  url: String!
+}
+
+type Url {
+  hash: String!
+  host: String!
+  hostname: String!
+  origin: String!
+  password: String!
+  pathname: String!
+  port: String!
+  protocol: String!
+  search: String!
+  username: String!
+}
+
+type Response {
+  ok: Boolean!
+
+  status: Int!
+
+  statusText: String!
+
+  type: ResponseType!
+
+  url: String!
+
+  redirected: Boolean!
+}
+
+enum RequestRedirect {
+  ERROR
+  FOLLOW
+  MANUAL
+}
+
+enum RequestMode {
+  SAME_ORIGIN
+  CORS
+  NAVIGATE
+  NO_CORS
 }
 
 enum Type {
@@ -59,6 +115,15 @@ enum Type {
 enum ResourceType {
   TEXT
   BINARY
+}
+
+enum ResponseType {
+  basic
+  cors
+  default
+  error
+  opaque
+  opaqueredirect
 }
 
 type VFile {

@@ -13,7 +13,7 @@ export interface FileNode extends Node {
 export class FileNodeImpl implements FileNode {
   constructor(public node: ResourceNode) {}
   get absolutePath() {
-    return fromFileUrl(this.node.uri);
+    return fromFileUrl(this.node.url);
   }
 
   get type() {

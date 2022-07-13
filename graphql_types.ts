@@ -51,7 +51,6 @@ export type Mdx = {
   __typename?: 'Mdx';
   compilerOptions?: Maybe<CompileOptions>;
   fileNode: FileNode;
-  html: Scalars['String'];
   jsx: Scalars['String'];
   raw: Scalars['String'];
   slug?: Maybe<Scalars['String']>;
@@ -87,17 +86,62 @@ export type QueryMdxArgs = {
   slug?: InputMaybe<Scalars['String']>;
 };
 
+export type Request = {
+  __typename?: 'Request';
+  integrity?: Maybe<Scalars['String']>;
+  isHistoryNavigation?: Maybe<Scalars['Boolean']>;
+  isReloadNavigation?: Maybe<Scalars['Boolean']>;
+  keepalive?: Maybe<Scalars['Boolean']>;
+  method: Scalars['String'];
+  mode?: Maybe<RequestMode>;
+  redirect: RequestRedirect;
+  referrer?: Maybe<Scalars['String']>;
+  referrerPolicy?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
+};
+
+export type RequestMode =
+  | 'CORS'
+  | 'NAVIGATE'
+  | 'NO_CORS'
+  | 'SAME_ORIGIN';
+
+export type RequestRedirect =
+  | 'ERROR'
+  | 'FOLLOW'
+  | 'MANUAL';
+
 export type ResourceNode = {
   __typename?: 'ResourceNode';
+  request: Request;
   resourceType: ResourceType;
+  response: Response;
   type: Scalars['String'];
-  uri: Scalars['String'];
+  url: Url;
   value: Scalars['String'];
 };
 
 export type ResourceType =
   | 'BINARY'
   | 'TEXT';
+
+export type Response = {
+  __typename?: 'Response';
+  ok: Scalars['Boolean'];
+  redirected: Scalars['Boolean'];
+  status: Scalars['Int'];
+  statusText: Scalars['String'];
+  type: ResponseType;
+  url: Scalars['String'];
+};
+
+export type ResponseType =
+  | 'basic'
+  | 'cors'
+  | 'default'
+  | 'error'
+  | 'opaque'
+  | 'opaqueredirect';
 
 export type Text = {
   __typename?: 'Text';
@@ -108,6 +152,20 @@ export type Text = {
 export type Type =
   | 'FILE'
   | 'TEXT';
+
+export type Url = {
+  __typename?: 'Url';
+  hash: Scalars['String'];
+  host: Scalars['String'];
+  hostname: Scalars['String'];
+  origin: Scalars['String'];
+  password: Scalars['String'];
+  pathname: Scalars['String'];
+  port: Scalars['String'];
+  protocol: Scalars['String'];
+  search: Scalars['String'];
+  username: Scalars['String'];
+};
 
 export type VFile = {
   __typename?: 'VFile';
@@ -199,16 +257,23 @@ export type ResolversTypes = {
   CompileOptionsInput: CompileOptionsInput;
   File: ResolverTypeWrapper<File>;
   FileNode: ResolverTypeWrapper<FileNode>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mdx: ResolverTypeWrapper<Mdx>;
   Meta: ResolverTypeWrapper<Meta>;
   Node: ResolversTypes['FileNode'];
   OutputFormat: OutputFormat;
   Query: ResolverTypeWrapper<{}>;
+  Request: ResolverTypeWrapper<Request>;
+  RequestMode: RequestMode;
+  RequestRedirect: RequestRedirect;
   ResourceNode: ResolverTypeWrapper<ResourceNode>;
   ResourceType: ResourceType;
+  Response: ResolverTypeWrapper<Response>;
+  ResponseType: ResponseType;
   String: ResolverTypeWrapper<Scalars['String']>;
   Text: ResolverTypeWrapper<Text>;
   Type: Type;
+  Url: ResolverTypeWrapper<Url>;
   VFile: ResolverTypeWrapper<VFile>;
 };
 
@@ -219,13 +284,17 @@ export type ResolversParentTypes = {
   CompileOptionsInput: CompileOptionsInput;
   File: File;
   FileNode: FileNode;
+  Int: Scalars['Int'];
   Mdx: Mdx;
   Meta: Meta;
   Node: ResolversParentTypes['FileNode'];
   Query: {};
+  Request: Request;
   ResourceNode: ResourceNode;
+  Response: Response;
   String: Scalars['String'];
   Text: Text;
+  Url: Url;
   VFile: VFile;
 };
 
@@ -254,7 +323,6 @@ export type FileNodeResolvers<ContextType = any, ParentType extends ResolversPar
 export type MdxResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mdx'] = ResolversParentTypes['Mdx']> = {
   compilerOptions?: Resolver<Maybe<ResolversTypes['CompileOptions']>, ParentType, ContextType>;
   fileNode?: Resolver<ResolversTypes['FileNode'], ParentType, ContextType>;
-  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   jsx?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -280,17 +348,57 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   meta?: Resolver<Maybe<ResolversTypes['Meta']>, ParentType, ContextType>;
 };
 
+export type RequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['Request'] = ResolversParentTypes['Request']> = {
+  integrity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isHistoryNavigation?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isReloadNavigation?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  keepalive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  method?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mode?: Resolver<Maybe<ResolversTypes['RequestMode']>, ParentType, ContextType>;
+  redirect?: Resolver<ResolversTypes['RequestRedirect'], ParentType, ContextType>;
+  referrer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  referrerPolicy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ResourceNodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResourceNode'] = ResolversParentTypes['ResourceNode']> = {
+  request?: Resolver<ResolversTypes['Request'], ParentType, ContextType>;
   resourceType?: Resolver<ResolversTypes['ResourceType'], ParentType, ContextType>;
+  response?: Resolver<ResolversTypes['Response'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['Url'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
+  ok?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  redirected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  statusText?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ResponseType'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TextResolvers<ContextType = any, ParentType extends ResolversParentTypes['Text'] = ResolversParentTypes['Text']> = {
   type?: Resolver<ResolversTypes['Type'], ParentType, ContextType>;
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['Url'] = ResolversParentTypes['Url']> = {
+  hash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  host?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hostname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  origin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  pathname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  port?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  protocol?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  search?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -309,8 +417,11 @@ export type Resolvers<ContextType = any> = {
   Meta?: MetaResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Request?: RequestResolvers<ContextType>;
   ResourceNode?: ResourceNodeResolvers<ContextType>;
+  Response?: ResponseResolvers<ContextType>;
   Text?: TextResolvers<ContextType>;
+  Url?: UrlResolvers<ContextType>;
   VFile?: VFileResolvers<ContextType>;
 };
 
@@ -320,7 +431,7 @@ export type MdxQueryVariables = Exact<{
 }>;
 
 
-export type MdxQuery = { __typename?: 'Query', mdx?: { __typename?: 'Mdx', jsx: string, html: string } | null };
+export type MdxQuery = { __typename?: 'Query', mdx?: { __typename?: 'Mdx', jsx: string } | null };
 
 export type AllMdxQueryVariables = Exact<{ [key: string]: never; }>;
 

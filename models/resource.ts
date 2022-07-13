@@ -1,30 +1,55 @@
 import { Node } from "~/models/node.ts";
+import { isString } from "isx/mod.ts";
+
+export type ResourceType = "BINARY" | "TEXT";
+
+export type ResourceHint =
+  | ResourceType
+  | {
+    type: ResourceType;
+  } & Pick<RequestInit, "headers">;
 
 export interface Resource {
-  [k: string]: "TEXT" | "BINARY";
+  [k: string]: ResourceHint;
 }
 
 export interface ResourceNode extends Node {
-  uri: string;
+  url: URL;
 
   type: string;
 
   resourceType: "BINARY" | "TEXT";
 
   value: string;
+
+  request: Request;
+
+  response: Response;
 }
 
 export async function fetcher(resource: Resource): Promise<ResourceNode[]> {
   const resourceNodes = await Promise.all(
-    Object.entries(resource).map(async ([uri, type]) => {
-      const res = await fetch(uri);
-      const value = await res.text();
+    Object.entries(resource).map(async ([_url, resourceHint]) => {
+      const [resourceType, requestInit] = isString(resourceHint)
+        ? [resourceHint]
+        : (() => {
+          const { type, ...requestInit } = resourceHint;
+
+          return [type, requestInit];
+        })();
+      const url = new URL(_url);
+      const request = new Request(_url, requestInit);
+
+      const response = await fetch(url, requestInit);
+      const value = await response.text();
 
       const resourceNode: ResourceNode = {
         value,
-        uri,
+        url,
+        request,
         type: "RESOURCE",
-        resourceType: type,
+        resourceType,
+        response,
       };
 
       return resourceNode;
