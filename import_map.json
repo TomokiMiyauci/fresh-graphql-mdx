@@ -14,6 +14,7 @@
     "@graphql-tools/schema": "https://esm.sh/@graphql-tools/schema@8.5.0",
     "pure_json/": "https://deno.land/x/pure_json@1.0.0-beta.1/",
     "types/mdx": "https://esm.sh/@types/mdx/types.d.ts",
+    "vfile": "https://esm.sh/v86/vfile@5.3.4",
     "~/": "./"
   }
 }
