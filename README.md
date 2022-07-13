@@ -1,4 +1,8 @@
-# fresh project
+# fresh-graphql-mdx
+
+**Unfortunately, Deno Deploy loses many features of MDX.**
+
+That is because Deno Deploy limits Dynamic import and `new Function`.
 
 ### Usage
 
