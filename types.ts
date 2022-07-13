@@ -1,10 +1,10 @@
-import { File } from "~/graphql_types.ts";
+import { Node } from "~/models/node.ts";
 
 export type ContextValue = {
-  mdxInputs: File[];
-
   meta: {
     baseUrl: string;
     rootDir: string;
   };
+
+  nodes: Node[];
 };

@@ -1,61 +1,57 @@
-import { QueryResolvers } from "~/graphql_types.ts";
+import { Mdx, QueryResolvers } from "~/graphql_types.ts";
 import { ContextValue } from "~/types.ts";
-import { join, parse, relative } from "std/path/mod.ts";
-import Mdx from "~/schema/mdx/model.ts";
-import { CompileOptionsInput, File } from "~/graphql_types.ts";
+import { CompileOptionsInput } from "~/graphql_types.ts";
 import { CompileOptions } from "@mdx-js/mdx";
+import { isMdxNode, MdxNode } from "~/models/mdx.ts";
+import { isResourceNode } from "~/models/resource.ts";
+import { isFileNode } from "~/models/file.ts";
 
 export const Query: QueryResolvers<ContextValue> = {
-  mdxInputs: (_, __, { mdxInputs }) => {
-    return mdxInputs;
-  },
-  mdx: (_, { slug, compilerOptions }, { mdxInputs, meta: { rootDir } }) => {
-    if (!slug) return null;
+  mdx: (_, { slug }, { nodes }) => {
+    const mdxNodes = nodes.filter(isMdxNode);
+    const mdxNode = mdxNodes.find((mdxNode) => {
+      return mdxNode.slug === slug;
+    });
 
-    const mdxs = mdxInputs.map((file) =>
-      fromFileToMdx(file, rootDir, {
-        compilerOptions: normalizeCompilerOptions(compilerOptions ?? {}),
-      })
-    );
-    const maybeMdx = mdxs.find((mdx) => mdx.slug === slug);
+    if (!mdxNode) return null;
 
-    if (!maybeMdx) return null;
-
-    return maybeMdx;
+    return fromMdxNode2Mdx(mdxNode);
   },
 
-  allMdx: (_, __, { mdxInputs, meta: { rootDir } }) => {
-    const result = mdxInputs.map((file) => fromFileToMdx(file, rootDir));
+  allMdx: (_, __, { nodes }) => {
+    return nodes.filter(isMdxNode).map(fromMdxNode2Mdx);
+  },
 
-    return result;
+  allResource: (_, __, { nodes }) => {
+    return nodes.filter(isResourceNode);
+  },
+
+  allFile: (_, __, { nodes }) => {
+    return nodes.filter(isFileNode);
   },
 };
 
-function resolveSlug(rootDir: string, filePath: string): string {
-  const rPath = relative(rootDir, filePath);
-  const { dir, name, root } = parse(rPath);
-  const pathBasedSlug = join("/", root, dir, name);
-  return pathBasedSlug;
-}
-
-function fromFileToMdx(
-  file: File,
-  rootDir: string,
-  { compilerOptions }: Partial<{ compilerOptions: CompileOptions }> = {},
+function fromMdxNode2Mdx(
+  { compilerOptions, ...rest }: MdxNode,
 ): Mdx {
-  compilerOptions?.outputFormat === "function-body";
-  const pathBasedSlug = resolveSlug(rootDir, file.absolutePath);
-
-  return new Mdx({ file }, { slug: pathBasedSlug, compilerOptions });
+  return {
+    compilerOptions: compilerOptions
+      ? normalizeCompilerOptions(compilerOptions)
+      : {},
+    ...rest,
+  };
 }
 
 function normalizeCompilerOptions(
-  { outputFormat, jsx, ...rest }: CompileOptionsInput,
-): CompileOptions {
+  { outputFormat, ...rest }: CompileOptions,
+): CompileOptionsInput {
+  console.log(rest);
   return {
-    outputFormat: outputFormat === "FUNCTION_BODY"
-      ? "function-body"
-      : "program",
+    outputFormat: outputFormat === "function-body"
+      ? "FUNCTION_BODY"
+      : outputFormat === "program"
+      ? "PROGRAM"
+      : null,
     ...rest,
   };
 }

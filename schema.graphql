@@ -1,14 +1,24 @@
 type Query {
-  allMdx: [Mdx!]!
+  allMdx: [Mdx]!
   mdx(slug: String, compilerOptions: CompileOptionsInput): Mdx
-  mdxInputs: [File]!
   meta: Meta
+  allResource: [ResourceNode]!
+  allFile: [FileNode]!
 }
 
 type Mdx {
   jsx: String!
   raw: String!
   slug: String
+
+  compilerOptions: CompileOptions
+
+  """
+  Virtual file.
+  """
+  vfile: VFile!
+
+  fileNode: FileNode!
 }
 
 type Meta {
@@ -20,9 +30,53 @@ type Text {
   type: Type!
 }
 
+interface Node {
+  type: String!
+}
+
+type FileNode implements Node {
+  type: String!
+
+  absolutePath: String!
+}
+
+type ResourceNode {
+  uri: String!
+
+  type: String!
+
+  value: String!
+
+  resourceType: ResourceType!
+}
+
 enum Type {
   TEXT
   FILE
+}
+
+enum ResourceType {
+  TEXT
+  BINARY
+}
+
+type VFile {
+  """
+  List of filepaths the file moved between.
+  The first is the original path and the last is the current path.
+  """
+  history: [String]!
+
+  """
+  Base of `path` (default: `process.cwd()` or `'/'` in browsers).
+  """
+  cwd: String!
+
+  """
+``Whether a file was saved to disk.
+``This is used by vfile reporters.
+  """
+  stored: Boolean!
 }
 
 type File {
@@ -31,6 +85,23 @@ type File {
   node: Text!
   value: String!
   type: Type!
+}
+
+type CompileOptions {
+  """
+  Whether to keep JSX.
+  """
+  jsx: Boolean
+
+  """
+  Whether to compile to a whole program or a function body.
+  """
+  outputFormat: OutputFormat
+
+  """
+  Place to import automatic JSX runtimes from (used in automatic runtime).
+  """
+  jsxImportSource: String
 }
 
 input CompileOptionsInput {
