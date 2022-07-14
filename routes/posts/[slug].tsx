@@ -6,16 +6,19 @@ import GraphQLHTTP from "~/gql_http.ts";
 import { gqlRequest, resolveResponse } from "~/utils/gql_fetches.ts";
 import { MdxQuery, QueryMdxArgs } from "~/graphql_types.ts";
 import { Status, STATUS_TEXT } from "std/http/mod.ts";
+import { run } from "@mdx-js/mdx";
+import * as runtime from "preact/jsx-runtime";
+import type { MDXContent as MDXContentType, MDXModule } from "types/mdx";
+import MdxComponents from "~/components/Mdx.tsx";
 
 const query = /* GraphQL */ `query Mdx($slug: String) {
   mdx(slug: $slug, compilerOptions:{ outputFormat: FUNCTION_BODY, jsxImportSource: "preact"}) {
     jsx
-    html
   }
 }
 `;
 
-export const handler: Handler<{ content: string }> = async (
+export const handler: Handler<{ MDXContent: MDXContentType }> = async (
   req,
   ctx,
 ) => {
@@ -35,25 +38,20 @@ export const handler: Handler<{ content: string }> = async (
     });
   }
 
-  // Deno Deploy is not available new Function or dynamic import
-  // const { default: MDXContent } = await run(mdx.jsx, runtime) as {
-  //   default: MDXContentType;
-  // };
+  const { default: MDXContent } = await run(mdx.jsx, runtime) as MDXModule;
 
-  return ctx.render({ content: mdx.html });
+  return ctx.render({ MDXContent });
 };
 
 export default function Home(
-  { data: { content } }: PageProps<{ content: string }>,
+  { data: { MDXContent } }: PageProps<{ MDXContent: MDXContentType }>,
 ) {
   return (
     <main>
       <article
-        dangerouslySetInnerHTML={{
-          "__html": content,
-        }}
         class={tw`prose`}
       >
+        <MDXContent components={MdxComponents} />
       </article>
     </main>
   );

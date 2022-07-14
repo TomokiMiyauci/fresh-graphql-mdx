@@ -25,19 +25,8 @@ type Meta {
   baseUrl: String!
 }
 
-type Text {
-  value: String!
-  type: Type!
-}
-
 interface Node {
   type: String!
-}
-
-type FileNode implements Node {
-  type: String!
-
-  absolutePath: String!
 }
 
 type ResourceNode {
@@ -60,8 +49,8 @@ type Request {
   isReloadNavigation: Boolean
   keepalive: Boolean
   method: String!
-  mode: RequestMode
-  redirect: RequestRedirect!
+  mode: String
+  redirect: String!
   referrer: String
   referrerPolicy: String
   url: String!
@@ -107,9 +96,9 @@ enum RequestMode {
   NO_CORS
 }
 
-enum Type {
+enum FileType {
   TEXT
-  FILE
+  BINARY
 }
 
 enum ResourceType {
@@ -145,12 +134,98 @@ type VFile {
   stored: Boolean!
 }
 
-type File {
-  resource: String!
-  absolutePath: String!
-  node: Text!
+type FileNode {
   value: String!
-  type: Type!
+  type: String!
+  fileType: FileType!
+
+  """
+  The root of the path such as '/' or 'c:\'
+  """
+  root: String!
+
+  """
+  The full directory path such as '/home/user/dir' or 'c:\path\dir'
+  """
+  dir: String!
+
+
+  """
+  The file name including extension (if any) such as 'index.html'
+  """
+  base: String!
+
+
+  """
+  The file extension (if any) such as '.html'
+  """
+  ext: String!
+
+  """
+  The file name without extension (if any) such as 'index'
+  """
+  name: String!
+
+  """
+  Absolute path
+  """
+  absolutePath: String!
+
+  """
+  Blocksize for filesystem I/O.
+  Linux/Mac OS only.
+  """
+  blksize: Int
+
+  """
+  Number of blocks allocated to the file, in 512-byte units.
+  Linux/Mac OS only.
+  """
+  blocks: Int
+
+  """
+  ID of the device containing the file.
+  Linux/Mac OS only.
+  """
+  dev: Int
+
+  """
+  Group ID of the owner of this file.
+  Linux/Mac OS only.
+  """
+  gid: Int
+
+  """
+  Inode number.
+  Linux/Mac OS only.
+  """
+  ino: Int
+
+  """
+  Number of hard links pointing to this file.
+  Linux/Mac OS only.
+  """
+  nlink: Int
+
+  """
+  Device ID of this file.
+  Linux/Mac OS only.
+  """
+  rdev: Int
+
+  """
+  The size of the file, in bytes.
+  """
+  size: Int!
+
+  # TODO:(miyauuci) implement Date Scalar
+  # mtime: Date
+
+  """
+  User ID of the owner of this file.
+  Linux/Mac OS only.
+  """
+  uid: Int
 }
 
 type CompileOptions {

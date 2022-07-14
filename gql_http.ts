@@ -4,7 +4,7 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { resolvers } from "~/schema/resolvers.ts";
 import { ContextValue } from "~/types.ts";
 import { expandGlob } from "std/fs/mod.ts";
-import { FileNodeImpl } from "~/models/file.ts";
+import { createFileNode } from "~/models/file.ts";
 import { fetcher, Resource } from "~/models/resource.ts";
 import { createMdxNode } from "~/models/mdx.ts";
 
@@ -24,7 +24,7 @@ for await (const entry of asyncEntry) {
 
 const resourceNodes = await fetcher(resource);
 const fileNodes = resourceNodes.map((resourceNode) =>
-  new FileNodeImpl(resourceNode)
+  createFileNode(resourceNode)
 );
 
 const schema = makeExecutableSchema({

@@ -32,20 +32,70 @@ export type CompileOptionsInput = {
   outputFormat?: InputMaybe<OutputFormat>;
 };
 
-export type File = {
-  __typename?: 'File';
+export type FileNode = {
+  __typename?: 'FileNode';
+  /** Absolute path */
   absolutePath: Scalars['String'];
-  node: Text;
-  resource: Scalars['String'];
-  type: Type;
+  /** The file name including extension (if any) such as 'index.html' */
+  base: Scalars['String'];
+  /**
+   * Blocksize for filesystem I/O.
+   * Linux/Mac OS only.
+   */
+  blksize?: Maybe<Scalars['Int']>;
+  /**
+   * Number of blocks allocated to the file, in 512-byte units.
+   * Linux/Mac OS only.
+   */
+  blocks?: Maybe<Scalars['Int']>;
+  /**
+   * ID of the device containing the file.
+   * Linux/Mac OS only.
+   */
+  dev?: Maybe<Scalars['Int']>;
+  /** The full directory path such as '/home/user/dir' or 'c:\path\dir' */
+  dir: Scalars['String'];
+  /** The file extension (if any) such as '.html' */
+  ext: Scalars['String'];
+  fileType: FileType;
+  /**
+   * Group ID of the owner of this file.
+   * Linux/Mac OS only.
+   */
+  gid?: Maybe<Scalars['Int']>;
+  /**
+   * Inode number.
+   * Linux/Mac OS only.
+   */
+  ino?: Maybe<Scalars['Int']>;
+  /** The file name without extension (if any) such as 'index' */
+  name: Scalars['String'];
+  /**
+   * Number of hard links pointing to this file.
+   * Linux/Mac OS only.
+   */
+  nlink?: Maybe<Scalars['Int']>;
+  /**
+   * Device ID of this file.
+   * Linux/Mac OS only.
+   */
+  rdev?: Maybe<Scalars['Int']>;
+  /** The root of the path such as '/' or 'c:\' */
+  root: Scalars['String'];
+  /** The size of the file, in bytes. */
+  size: Scalars['Int'];
+  type: Scalars['String'];
+  /**
+   * User ID of the owner of this file.
+   * Linux/Mac OS only.
+   */
+  uid?: Maybe<Scalars['Int']>;
   value: Scalars['String'];
 };
 
-export type FileNode = Node & {
-  __typename?: 'FileNode';
-  absolutePath: Scalars['String'];
-  type: Scalars['String'];
-};
+export type FileType =
+  | 'BINARY'
+  | 'TEXT';
 
 export type Mdx = {
   __typename?: 'Mdx';
@@ -93,8 +143,8 @@ export type Request = {
   isReloadNavigation?: Maybe<Scalars['Boolean']>;
   keepalive?: Maybe<Scalars['Boolean']>;
   method: Scalars['String'];
-  mode?: Maybe<RequestMode>;
-  redirect: RequestRedirect;
+  mode?: Maybe<Scalars['String']>;
+  redirect: Scalars['String'];
   referrer?: Maybe<Scalars['String']>;
   referrerPolicy?: Maybe<Scalars['String']>;
   url: Scalars['String'];
@@ -142,16 +192,6 @@ export type ResponseType =
   | 'error'
   | 'opaque'
   | 'opaqueredirect';
-
-export type Text = {
-  __typename?: 'Text';
-  type: Type;
-  value: Scalars['String'];
-};
-
-export type Type =
-  | 'FILE'
-  | 'TEXT';
 
 export type Url = {
   __typename?: 'Url';
@@ -255,12 +295,12 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CompileOptions: ResolverTypeWrapper<CompileOptions>;
   CompileOptionsInput: CompileOptionsInput;
-  File: ResolverTypeWrapper<File>;
   FileNode: ResolverTypeWrapper<FileNode>;
+  FileType: FileType;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mdx: ResolverTypeWrapper<Mdx>;
   Meta: ResolverTypeWrapper<Meta>;
-  Node: ResolversTypes['FileNode'];
+  Node: never;
   OutputFormat: OutputFormat;
   Query: ResolverTypeWrapper<{}>;
   Request: ResolverTypeWrapper<Request>;
@@ -271,8 +311,6 @@ export type ResolversTypes = {
   Response: ResolverTypeWrapper<Response>;
   ResponseType: ResponseType;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Text: ResolverTypeWrapper<Text>;
-  Type: Type;
   Url: ResolverTypeWrapper<Url>;
   VFile: ResolverTypeWrapper<VFile>;
 };
@@ -282,18 +320,16 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   CompileOptions: CompileOptions;
   CompileOptionsInput: CompileOptionsInput;
-  File: File;
   FileNode: FileNode;
   Int: Scalars['Int'];
   Mdx: Mdx;
   Meta: Meta;
-  Node: ResolversParentTypes['FileNode'];
+  Node: never;
   Query: {};
   Request: Request;
   ResourceNode: ResourceNode;
   Response: Response;
   String: Scalars['String'];
-  Text: Text;
   Url: Url;
   VFile: VFile;
 };
@@ -305,18 +341,25 @@ export type CompileOptionsResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type FileResolvers<ContextType = any, ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']> = {
-  absolutePath?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['Text'], ParentType, ContextType>;
-  resource?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['Type'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type FileNodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['FileNode'] = ResolversParentTypes['FileNode']> = {
   absolutePath?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  base?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  blksize?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  blocks?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  dev?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  dir?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ext?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fileType?: Resolver<ResolversTypes['FileType'], ParentType, ContextType>;
+  gid?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  ino?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nlink?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  rdev?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  root?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  size?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  uid?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -336,7 +379,7 @@ export type MetaResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
-  __resolveType: TypeResolveFn<'FileNode', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
@@ -354,8 +397,8 @@ export type RequestResolvers<ContextType = any, ParentType extends ResolversPare
   isReloadNavigation?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   keepalive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   method?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  mode?: Resolver<Maybe<ResolversTypes['RequestMode']>, ParentType, ContextType>;
-  redirect?: Resolver<ResolversTypes['RequestRedirect'], ParentType, ContextType>;
+  mode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  redirect?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   referrer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   referrerPolicy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -382,12 +425,6 @@ export type ResponseResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TextResolvers<ContextType = any, ParentType extends ResolversParentTypes['Text'] = ResolversParentTypes['Text']> = {
-  type?: Resolver<ResolversTypes['Type'], ParentType, ContextType>;
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UrlResolvers<ContextType = any, ParentType extends ResolversParentTypes['Url'] = ResolversParentTypes['Url']> = {
   hash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   host?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -411,7 +448,6 @@ export type VFileResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type Resolvers<ContextType = any> = {
   CompileOptions?: CompileOptionsResolvers<ContextType>;
-  File?: FileResolvers<ContextType>;
   FileNode?: FileNodeResolvers<ContextType>;
   Mdx?: MdxResolvers<ContextType>;
   Meta?: MetaResolvers<ContextType>;
@@ -420,7 +456,6 @@ export type Resolvers<ContextType = any> = {
   Request?: RequestResolvers<ContextType>;
   ResourceNode?: ResourceNodeResolvers<ContextType>;
   Response?: ResponseResolvers<ContextType>;
-  Text?: TextResolvers<ContextType>;
   Url?: UrlResolvers<ContextType>;
   VFile?: VFileResolvers<ContextType>;
 };
