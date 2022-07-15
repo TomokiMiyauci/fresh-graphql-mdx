@@ -1,9 +1,9 @@
 import { Node } from "~/models/node.ts";
 import { CompileOptions } from "@mdx-js/mdx";
-import { FileNode } from "~/models/file.ts";
 import { compileSync } from "@mdx-js/mdx";
 import { VFile } from "vfile";
-import { join, parse, relative } from "std/path/mod.ts";
+import { fromFileUrl, join, parse, relative } from "std/path/mod.ts";
+import { ResourceNode } from "~/models/resource.ts";
 
 export interface MdxNode extends Node {
   type: string;
@@ -16,13 +16,11 @@ export interface MdxNode extends Node {
 
   vfile: VFile;
 
-  fileNode: FileNode;
-
   slug: string;
 }
 
 type Params = {
-  node: FileNode;
+  node: ResourceNode;
   rootDir: string;
 };
 
@@ -42,16 +40,20 @@ export function createMdxNode(
   { compilerOptions }: Readonly<Partial<Options>>,
 ): MdxNode {
   const vfile = compileSync(node.value, compilerOptions);
-  const slug = resolveSlug(rootDir, node.absolutePath);
 
-  resolveSlug;
+  const slug = node.url.protocol === "file:"
+    ? (() => {
+      const absoluteUrl = fromFileUrl(node.url);
+      return resolveSlug(rootDir, absoluteUrl);
+    })()
+    : "";
+
   return {
     type: "MDX",
     jsx: vfile.value.toString(),
     raw: node.value,
     compilerOptions,
     vfile,
-    fileNode: node,
     slug,
   };
 }

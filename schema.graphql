@@ -17,8 +17,6 @@ type Mdx {
   Virtual file.
   """
   vfile: VFile!
-
-  fileNode: FileNode!
 }
 
 type Meta {
