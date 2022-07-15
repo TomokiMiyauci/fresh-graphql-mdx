@@ -1,6 +1,7 @@
 /** @jsx h */
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import { Handler, PageProps } from "fresh/server.ts";
+import { Head } from "fresh/runtime.ts";
 import { tw } from "@twind";
 import GraphQLHTTP from "~/gql_http.ts";
 import { gqlRequest, resolveResponse } from "~/utils/gql_fetches.ts";
@@ -47,12 +48,25 @@ export default function Home(
   { data: { MDXContent } }: PageProps<{ MDXContent: MDXContentType }>,
 ) {
   return (
-    <main>
-      <article
-        class={tw`prose`}
-      >
-        <MDXContent components={MdxComponents} />
-      </article>
-    </main>
+    <Fragment>
+      <Head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark.min.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+          crossOrigin="anonymous"
+        />
+      </Head>
+      <main>
+        <article
+          class={tw`prose max-w-prose mx-auto`}
+        >
+          <MDXContent components={MdxComponents} />
+        </article>
+      </main>
+    </Fragment>
   );
 }

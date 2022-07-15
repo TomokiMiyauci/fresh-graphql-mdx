@@ -471,4 +471,4 @@ export type MdxQuery = { __typename?: 'Query', mdx?: { __typename?: 'Mdx', jsx: 
 export type AllMdxQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllMdxQuery = { __typename?: 'Query', allMdx: Array<{ __typename?: 'Mdx', slug?: string | null } | null> };
+export type AllMdxQuery = { __typename?: 'Query', allMdx: Array<{ __typename?: 'Mdx', slug?: string | null, fileNode: { __typename?: 'FileNode', name: string } } | null> };

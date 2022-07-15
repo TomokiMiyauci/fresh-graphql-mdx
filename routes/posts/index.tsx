@@ -9,6 +9,9 @@ import { AllMdxQuery } from "~/graphql_types.ts";
 const query = /* GraphQL */ `query AllMdx {
   allMdx {
     slug
+    fileNode {
+      name
+    }
   }
 }
 `;
@@ -34,7 +37,7 @@ export default function Home(
         {allMdx.map((mdx) => {
           return (
             <li>
-              <a href={mdx.slug!}>hoge</a>
+              <a href={mdx!.slug!}>{mdx?.fileNode.name}</a>
             </li>
           );
         })}

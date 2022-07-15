@@ -34,11 +34,24 @@ const schema = makeExecutableSchema({
 const baseUrl = fromFileUrl(import.meta.url);
 const rootDir = dirname(baseUrl);
 
+import remarkGfm from "https://esm.sh/remark-gfm";
+import rehypeHighlight from "https://esm.sh/rehype-highlight";
+import rehypeKatex from "https://esm.sh/rehype-katex";
+import remarkMath from "https://esm.sh/remark-math";
+import remarkSmartypants from "https://esm.sh/remark-smartypants";
+import emoji from "https://esm.sh/remark-emoji";
 const mdxNodes = fileNodes.map((node) =>
   createMdxNode({ node, rootDir }, {
     compilerOptions: {
       jsxImportSource: "preact",
       outputFormat: "function-body",
+      remarkPlugins: [
+        remarkGfm,
+        remarkMath,
+        [emoji, { emoticon: true }],
+        remarkSmartypants,
+      ],
+      rehypePlugins: [rehypeHighlight, rehypeKatex],
     },
   })
 );
