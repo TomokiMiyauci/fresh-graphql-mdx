@@ -4,6 +4,12 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { resolvers } from "~/schema/resolvers.ts";
 import { ContextValue } from "~/types.ts";
 import { fromFileSystem, graphqlMdx, resolvePlugins } from "~/utils/mdx.ts";
+import remarkGfm from "https://esm.sh/remark-gfm@3.0.1";
+import rehypeHighlight from "https://esm.sh/rehype-highlight@5.0.2";
+import rehypeKatex from "https://esm.sh/rehype-katex@6.0.2";
+import remarkMath from "https://esm.sh/remark-math@5.1.1";
+import remarkSmartypants from "https://esm.sh/remark-smartypants@2.0.0";
+import emoji from "https://esm.sh/remark-emoji@3.0.2";
 
 const baseDir = dirname(fromFileUrl(import.meta.url));
 const filePath = join(baseDir, "schema.graphql");
@@ -26,6 +32,13 @@ const nodes = await resolvePlugins([
     compilerOptions: {
       jsxImportSource: "preact",
       outputFormat: "function-body",
+      remarkPlugins: [
+        remarkGfm,
+        remarkMath,
+        [emoji, { emoticon: true }],
+        remarkSmartypants,
+      ],
+      rehypePlugins: [rehypeHighlight, rehypeKatex],
     },
   }),
 ], context);
