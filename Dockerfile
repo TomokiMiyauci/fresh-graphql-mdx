@@ -6,4 +6,6 @@ EXPOSE 8000
 WORKDIR /
 COPY . .
 
+RUN deno cache main.ts
+
 CMD ["deno", "run", "-A", "main.ts"]
